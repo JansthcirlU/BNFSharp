@@ -1,15 +1,15 @@
-namespace BNFSharp.Grammar
+namespace rec BNFSharp.Grammar
 
 open Common
 
-module rec Character =
+module Character =
     type Character =
-        private
+        internal
         | Letter of Letter.Letter
         | Digit of Digit.Digit
         | Symbol of Symbol.Symbol
     type CharacterError =
-        private
+        internal
         | LetterError of Letter.LetterError
         | DigitError of Digit.DigitError
         | SymbolError of Symbol.SymbolError
@@ -30,35 +30,35 @@ module rec Character =
             | [ x ] -> x
             | _ -> failwith $"More than one character type matched for '{c}' but character types must be mutually exclusive."
 
-    module Letter =
-        type Letter = private Letter of char
-        type LetterError = private InvalidLetter of char
+module Letter =
+    type Letter = internal Letter of char
+    type LetterError = internal InvalidLetter of char
 
-        let private ValidLetters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        
-        let create c =
-            if ValidLetters.Contains c
-            then Ok (Letter c)
-            else Error (InvalidLetter c)
+    let private ValidLetters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
     
-    module Digit =
-        type Digit = private Digit of char
-        type DigitError = private InvalidDigit of char
-        
-        let private ValidDigits = "0123456789"
-        
-        let create c =
-            if ValidDigits.Contains c
-            then Ok (Digit c)
-            else Error (InvalidDigit c)
-    
-    module Symbol =
-        type Symbol = private Symbol of char
-        type SymbolError = private InvalidSymbol of char
+    let create (c: char) =
+        if ValidLetters.Contains c
+        then Ok (Letter c)
+        else Error (InvalidLetter c)
 
-        let private ValidSymbols = "|!#$%&()*+,-./:;>=<?@[\\]^_{}~"
-        
-        let create c =
-            if ValidSymbols.Contains c
-            then Ok (Symbol c)
-            else Error (InvalidSymbol c)
+module Digit =
+    type Digit = internal Digit of char
+    type DigitError = internal InvalidDigit of char
+    
+    let private ValidDigits = "0123456789"
+    
+    let create (c: char) =
+        if ValidDigits.Contains c
+        then Ok (Digit c)
+        else Error (InvalidDigit c)
+
+module Symbol =
+    type Symbol = internal Symbol of char
+    type SymbolError = internal InvalidSymbol of char
+
+    let private ValidSymbols = "|!#$%&()*+,-./:;>=<?@[\\]^_{}~"
+    
+    let create (c: char) =
+        if ValidSymbols.Contains c
+        then Ok (Symbol c)
+        else Error (InvalidSymbol c)
