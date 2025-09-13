@@ -1,6 +1,6 @@
 module CharacterTestData
 
-let toTheoryData (s: string) =
+let toTheoryData (s: 'T seq) =
     s
     |> Seq.map (fun c -> [| box c |])
     |> Seq.toList
