@@ -1,8 +1,8 @@
-namespace BNFSharp.Grammar
+namespace rec BNFSharp.Grammar
 
 open Common
 
-module rec Literal =
+module Literal =
     type Literal =
         internal
         | SingleQuoteLiteral of SingleQuoteText.SingleQuoteText
@@ -22,70 +22,70 @@ module rec Literal =
         | singleQuoteString when singleQuoteString.Contains '\'' -> SingleQuoteText.create s |> StateResult.map SingleQuoteLiteralError SingleQuoteLiteral
         | other -> SingleQuoteText.create other |> StateResult.map SingleQuoteLiteralError SingleQuoteLiteral
 
-    module SingleQuoteText =
-        type SingleQuoteText = private SingleQuoteText of CharacterOrSingleQuote.CharacterOrSingleQuote list
-        type SingleQuoteTextError =
-            private
-            | CharacterOrSingleQuoteError of CharacterOrSingleQuote.CharacterOrSingleQuoteError
-            | DoubleQuoteError
+module SingleQuoteText =
+    type SingleQuoteText = internal SingleQuoteText of CharacterOrSingleQuote.CharacterOrSingleQuote list
+    type SingleQuoteTextError =
+        internal
+        | CharacterOrSingleQuoteError of CharacterOrSingleQuote.CharacterOrSingleQuoteError
+        | DoubleQuoteError
 
-        let create (s: string) =
-            match s with
-            | containsDoubleQuote when containsDoubleQuote.Contains '\"' -> Error DoubleQuoteError
-            | _ -> 
-                s.ToCharArray()
-                |> Array.toList
-                |> StateResultList.foldOrError CharacterOrSingleQuote.create
-                |> StateResult.map CharacterOrSingleQuoteError SingleQuoteText
+    let create (s: string) =
+        match s with
+        | containsDoubleQuote when containsDoubleQuote.Contains '\"' -> Error DoubleQuoteError
+        | _ -> 
+            s.ToCharArray()
+            |> Array.toList
+            |> StateResultList.foldOrError CharacterOrSingleQuote.create
+            |> StateResult.map CharacterOrSingleQuoteError SingleQuoteText
 
-    module DoubleQuoteText =
-        type DoubleQuoteText = private DoubleQuoteText of CharacterOrDoubleQuote.CharacterOrDoubleQuote list
-        type DoubleQuoteTextError =
-            private
-            | CharacterOrDoubleQuoteError of CharacterOrDoubleQuote.CharacterOrDoubleQuoteError
-            | SingleQuoteError
+module DoubleQuoteText =
+    type DoubleQuoteText = internal DoubleQuoteText of CharacterOrDoubleQuote.CharacterOrDoubleQuote list
+    type DoubleQuoteTextError =
+        internal
+        | CharacterOrDoubleQuoteError of CharacterOrDoubleQuote.CharacterOrDoubleQuoteError
+        | SingleQuoteError
 
-        let create (s: string) =
-            match s with
-            | containsSingleQuote when containsSingleQuote.Contains '\'' -> Error SingleQuoteError
-            | _ ->
-                s.ToCharArray()
-                |> Array.toList
-                |> StateResultList.foldOrError CharacterOrDoubleQuote.create
-                |> StateResult.map CharacterOrDoubleQuoteError DoubleQuoteText
+    let create (s: string) =
+        match s with
+        | containsSingleQuote when containsSingleQuote.Contains '\'' -> Error SingleQuoteError
+        | _ ->
+            s.ToCharArray()
+            |> Array.toList
+            |> StateResultList.foldOrError CharacterOrDoubleQuote.create
+            |> StateResult.map CharacterOrDoubleQuoteError DoubleQuoteText
 
-    module CharacterOrSingleQuote =
-        type CharacterOrSingleQuote =
-            private
-            | Character of Character.Character
-            | SingleQuote
-        type CharacterOrSingleQuoteError =
-            private
-            | CharacterError of Character.CharacterError
-            | DoubleQuoteError
-        
-        let create (c: char) =
-            match c with
-            | '\"' -> Error DoubleQuoteError
-            | '\'' -> Ok SingleQuote
-            | character ->
-                Character.create character
-                |> StateResult.map CharacterError Character
+module CharacterOrSingleQuote =
+    type CharacterOrSingleQuote =
+        internal
+        | Character of Character.Character
+        | SingleQuote
+    type CharacterOrSingleQuoteError =
+        internal
+        | CharacterError of Character.CharacterError
+        | DoubleQuoteError
+    
+    let create (c: char) =
+        match c with
+        | '\"' -> Error DoubleQuoteError
+        | '\'' -> Ok SingleQuote
+        | character ->
+            Character.create character
+            |> StateResult.map CharacterError Character
 
-    module CharacterOrDoubleQuote =
-        type CharacterOrDoubleQuote =
-            private
-            | Character of Character.Character
-            | DoubleQuote
-        type CharacterOrDoubleQuoteError =
-            private
-            | CharacterError of Character.CharacterError
-            | SingleQuoteError
-        
-        let create (c: char) =
-            match c with
-            | '\'' -> Error SingleQuoteError
-            | '\"' -> Ok DoubleQuote
-            | character ->
-                Character.create character
-                |> StateResult.map CharacterError Character
+module CharacterOrDoubleQuote =
+    type CharacterOrDoubleQuote =
+        internal
+        | Character of Character.Character
+        | DoubleQuote
+    type CharacterOrDoubleQuoteError =
+        internal
+        | CharacterError of Character.CharacterError
+        | SingleQuoteError
+    
+    let create (c: char) =
+        match c with
+        | '\'' -> Error SingleQuoteError
+        | '\"' -> Ok DoubleQuote
+        | character ->
+            Character.create character
+            |> StateResult.map CharacterError Character
