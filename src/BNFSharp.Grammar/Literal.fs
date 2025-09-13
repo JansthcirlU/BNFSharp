@@ -4,11 +4,11 @@ open Common
 
 module rec Literal =
     type Literal =
-        private
+        internal
         | SingleQuoteLiteral of SingleQuoteText.SingleQuoteText
         | DoubleQuoteLiteral of DoubleQuoteText.DoubleQuoteText
     type LiteralError =
-        private
+        internal
         | SingleQuoteLiteralError of SingleQuoteText.SingleQuoteTextError
         | DoubleQuoteLiteralError of DoubleQuoteText.DoubleQuoteTextError
         | MixedQuotesError
